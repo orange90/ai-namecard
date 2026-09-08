@@ -6,7 +6,7 @@
 
 FoloCard 发布时包含两份资产：
 
-- `FoloToy-AI-Passport-full.bin`：已经验证的 ESP32-C3 完整固件镜像。
+- `ai-namecard-full.bin`：已经验证的 ESP32-C3 完整固件镜像。
 - `FoloCard-<version>-plugin.zip`：可解压加载的 Chromium 扩展，以及原生消息与 BLE
   同步工具。
 
@@ -23,14 +23,14 @@ idf.py --version
 ./tools/validate.sh --static
 ./tools/validate.sh --firmware
 ./tools/folocard/package-release.sh build/release
-shasum -a 256 build/FoloToy-AI-Passport-full.bin \
+shasum -a 256 build/ai-namecard-full.bin \
   build/release/FoloCard-<version>-plugin.zip
 ```
 
 `idf.py --version` 必须显示 `ESP-IDF v5.5.3`。固件命令会在检查 bootloader、分区表 MD5、
 应用大小、受保护的 `cardid` 与 Recovery 区域及 UP 键五秒 Recovery 钩子后，才生成
-`build/FoloToy-AI-Passport-full.bin`。不得使用只有应用内容的
-`build/FoloToy-AI-Passport.bin` 替代。
+`build/ai-namecard-full.bin`。不得使用只有应用内容的
+`build/ai-namecard.bin` 替代。
 
 打包脚本从 `manifest.json` 读取扩展版本，生成 ZIP。其顶层目录包含 `extension/`、原生工具、
 依赖文件与双语安装说明；特意排除 `node_modules`、构建输出、Python 字节码、本地环境及所有
@@ -42,7 +42,7 @@ shasum -a 256 build/FoloToy-AI-Passport-full.bin \
 `v<version>-folocard`，例如 `v0.5.0-folocard`。
 
 安装固件时，在 AI Passport 浏览器烧录工具中选择
-`FoloToy-AI-Passport-full.bin`，偏移量为 `0x0`。不得把这个合并镜像直接写入已配置的设备：
+`ai-namecard-full.bin`，偏移量为 `0x0`。不得把这个合并镜像直接写入已配置的设备：
 其资源布局跨越了受保护的身份区。已配置设备应使用 AI Passport 小程序安装流程或分段开发烧录。
 绝不能执行整片擦除。
 

@@ -13,7 +13,7 @@ from pathlib import Path
 EXPECTED_IMAGES = (
     (0x0000, "bootloader/bootloader.bin"),
     (0x8000, "partition_table/partition-table.bin"),
-    (0x10000, "FoloToy-AI-Passport.bin"),
+    (0x10000, "ai-namecard.bin"),
 )
 
 FLASH_SIZE = 8 * 1024 * 1024
@@ -102,7 +102,7 @@ def verify_recovery_contract(merged: bytes, build_dir: Path) -> None:
         if item.label != "recovery" and item.offset < RECOVERY_OFFSET + RECOVERY_SIZE and RECOVERY_OFFSET < item.end:
             raise ValueError(f"partition {item.label!r} overlaps permanent Recovery")
 
-    app_path = build_dir / "FoloToy-AI-Passport.bin"
+    app_path = build_dir / "ai-namecard.bin"
     app_size = app_path.stat().st_size
     if app_size > APP_MAX_SIZE:
         raise ValueError(f"application is {app_size} bytes; BLE limit is {APP_MAX_SIZE}")
@@ -129,7 +129,7 @@ def verify_recovery_contract(merged: bytes, build_dir: Path) -> None:
 
 def main() -> int:
     build_dir = Path(sys.argv[1] if len(sys.argv) > 1 else "build").resolve()
-    merged_path = build_dir / "FoloToy-AI-Passport-full.bin"
+    merged_path = build_dir / "ai-namecard-full.bin"
     flash_args_path = build_dir / "flash_args"
 
     if not merged_path.is_file() or not flash_args_path.is_file():

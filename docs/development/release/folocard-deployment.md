@@ -6,7 +6,7 @@
 
 This guide deploys FoloCard as two release assets:
 
-- `FoloToy-AI-Passport-full.bin` is the verified ESP32-C3 firmware image.
+- `ai-namecard-full.bin` is the verified ESP32-C3 firmware image.
 - `FoloCard-<version>-plugin.zip` is the unpacked Chromium extension plus the
   native messaging and BLE synchronization tools.
 
@@ -25,15 +25,15 @@ idf.py --version
 ./tools/validate.sh --static
 ./tools/validate.sh --firmware
 ./tools/folocard/package-release.sh build/release
-shasum -a 256 build/FoloToy-AI-Passport-full.bin \
+shasum -a 256 build/ai-namecard-full.bin \
   build/release/FoloCard-<version>-plugin.zip
 ```
 
 `idf.py --version` must report `ESP-IDF v5.5.3`. The firmware command creates
-`build/FoloToy-AI-Passport-full.bin` only after checking the bootloader,
+`build/ai-namecard-full.bin` only after checking the bootloader,
 partition-table MD5, application size, protected `cardid` and Recovery regions,
 and the five-second UP-key Recovery hook. Do not substitute the app-only
-`build/FoloToy-AI-Passport.bin`.
+`build/ai-namecard.bin`.
 
 The packaging script reads the extension version from `manifest.json` and
 creates a ZIP whose top-level directory contains `extension/`, the native tools,
@@ -47,7 +47,7 @@ Upload both generated files and their SHA-256 values to the GitHub Release. Use
 a tag named `v<version>-folocard`, for example `v0.5.0-folocard`.
 
 To install the firmware, use the AI Passport browser flasher and select
-`FoloToy-AI-Passport-full.bin` at offset `0x0`. Never raw-flash this merged file
+`ai-namecard-full.bin` at offset `0x0`. Never raw-flash this merged file
 onto a provisioned device: its resource layout spans the protected identity
 region. On a provisioned device, use the AI Passport mini-program installation
 flow or segmented development flashing. Never run an erase-flash operation.

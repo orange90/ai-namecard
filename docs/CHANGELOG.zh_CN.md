@@ -6,6 +6,9 @@
 
 ## Unreleased
 
+- 将应用镜像和合并发布固件分别重命名为 `ai-namecard.bin` 与
+  `ai-namecard-full.bin`，避免与官方 AI Passport 固件混淆。
+
 - 移除知乎名片的“今日互动”指标，改为提示按 OK 键查看主页二维码。
 
 - 将 FoloCard 的 Codex、知乎和小红书页面标识替换为提供的官方品牌图标。

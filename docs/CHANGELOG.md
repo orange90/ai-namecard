@@ -6,6 +6,10 @@
 
 ## Unreleased
 
+- Renamed the application and merged release firmware artifacts to
+  `ai-namecard.bin` and `ai-namecard-full.bin` to distinguish this fork from the
+  official AI Passport firmware.
+
 - Replaced the Zhihu card's `Today interactions` metric with an instruction to
   press OK to view the profile QR code.
 

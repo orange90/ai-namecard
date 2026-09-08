@@ -23,7 +23,7 @@ Recovery 已被擦除，必须先走官网 USB 恢复流程。
 
 - ESP32-C3、8 MB Flash、ESP-IDF 5.5.3。
 - 从 `0x0` 开始的合并 ESP 镜像，固定产物为
-  `build/FoloToy-AI-Passport-full.bin`。
+  `build/ai-namecard-full.bin`。
 - 位于 `0x10000` 的主应用镜像，不得超过 `0x300000` 字节。
 - `cardid`：data/NVS，地址 `0x356000`，大小 `0x4000`。
 - `recovery`：app/test，地址 `0x700000`，大小 `0x100000`。
@@ -48,8 +48,8 @@ Recovery 已被擦除，必须先走官网 USB 恢复流程。
 解析分区表并检查 MD5、保护范围和 3 MB 应用上限，拒绝保护分区数据，同时
 确认 Recovery boot hook 已链接。CI 执行同一门禁。该命令失败时不得发布。
 
-只上传 `build/FoloToy-AI-Passport-full.bin`。名称相近的应用单镜像
-`build/FoloToy-AI-Passport.bin` 无法通过小程序兼容检测。
+只上传 `build/ai-namecard-full.bin`。名称相近的应用单镜像
+`build/ai-namecard.bin` 无法通过小程序兼容检测。
 
 ## 开发烧录安全
 

@@ -27,7 +27,7 @@ Derivative projects must preserve all of the following:
 
 - ESP32-C3, 8 MB Flash, ESP-IDF 5.5.3.
 - A merged ESP image starting at `0x0`, produced as
-  `build/FoloToy-AI-Passport-full.bin`.
+  `build/ai-namecard-full.bin`.
 - One main application image at `0x10000`, no larger than `0x300000` bytes.
 - `cardid`: data/NVS at `0x356000`, size `0x4000`.
 - `recovery`: app/test at `0x700000`, size `0x100000`.
@@ -56,8 +56,8 @@ MD5 and protected ranges, enforces the 3 MB application limit, rejects protected
 payload bytes, and confirms the Recovery boot hook is linked. CI runs the same
 gate. Do not publish an artifact when this command fails.
 
-Upload only `build/FoloToy-AI-Passport-full.bin`; the similarly named app-only
-`build/FoloToy-AI-Passport.bin` cannot pass mini-program compatibility checks.
+Upload only `build/ai-namecard-full.bin`; the similarly named app-only
+`build/ai-namecard.bin` cannot pass mini-program compatibility checks.
 
 ## Flashing safety during development
 

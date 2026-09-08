@@ -9,4 +9,4 @@ idf_build_set_property(
     "${CMAKE_CURRENT_LIST_DIR}/bootloader_components/"
     APPEND)
 
-project(FoloToy-AI-Passport)
+project(ai-namecard)
