@@ -6,6 +6,8 @@
 
 ## Unreleased
 
+- 补充 BLE 连接失败提示：重新配对前，先在系统蓝牙设置中忽略已有的 FoloCard。
+
 - 将应用镜像和合并发布固件分别重命名为 `ai-namecard.bin` 与
   `ai-namecard-full.bin`，避免与官方 AI Passport 固件混淆。
 

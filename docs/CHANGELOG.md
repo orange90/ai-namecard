@@ -6,6 +6,9 @@
 
 ## Unreleased
 
+- Clarified the BLE connection failure message to tell users to forget an
+  existing FoloCard system pairing before pairing again.
+
 - Renamed the application and merged release firmware artifacts to
   `ai-namecard.bin` and `ai-namecard-full.bin` to distinguish this fork from the
   official AI Passport firmware.

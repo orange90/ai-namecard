@@ -68,7 +68,8 @@ async def send(device, data):
     except SyncError:
         raise
     except Exception as error:
-        raise SyncError('BLE 连接失败；请确认设备同步已开启，并在系统配对框输入设备 PIN。') from error
+        raise SyncError('BLE 连接失败；请确认设备同步已开启，并在系统配对框输入设备 PIN。'
+                        '如果仍然失败，请先在系统蓝牙设置中忽略已有的 FoloCard，再重新配对。') from error
     raise SyncError('设备没有返回保存成功回执；旧名片仍保留。')
 
 
