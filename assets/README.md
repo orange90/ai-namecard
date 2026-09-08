@@ -41,6 +41,15 @@ PNG files at runtime. Each buffer occupies 6,400 bytes of flash. The original
 PNG files are also copied to `tools/folocard/extension/assets/` so the browser
 extension's device-screen preview uses the same marks.
 
+### AI namecard community cover
+
+`images/ai-namecard-community-cover-v2.png` is a 1,086 × 1,448 PNG (3:4
+portrait) for the AI Passport Community listing. It is an upload-only marketing
+cover and is not embedded in firmware. The image uses the contributor-provided
+photos of the physical AI Passport and its Codex, Zhihu, and Xiaohongshu screen
+states, composited with the built-in image-generation tool. Reconfirm the
+contributor's permission before redistributing it outside this project.
+
 ## Music and sound effects
 
 Store reusable music and sound-effect sources in `music/`.

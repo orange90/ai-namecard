@@ -6,7 +6,7 @@
 
 ## Unreleased
 
-- Clarified the BLE connection failure message to tell users to forget an
+- FoloCard 0.5.1 clarifies the BLE connection failure message by telling users to forget an
   existing FoloCard system pairing before pairing again.
 
 - Renamed the application and merged release firmware artifacts to

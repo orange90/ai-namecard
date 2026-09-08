@@ -4,6 +4,20 @@
 
 FoloToy AI Passport 是一个开放式可穿戴 AI 硬件，本仓库是这款 AI 硬件的开发基线。它不只展示"板子能运行什么"，还把开发应用所需的**硬件事实、稳定接口、资源边界、参考实现和验收方法**放在同一仓库中。
 
+## FoloCard 快速开始
+
+从 [GitHub Releases](https://github.com/orange90/ai-namecard/releases) 下载最新的 `ai-namecard-full.bin` 和 `FoloCard-<version>-plugin.zip`。按照部署说明中的安全提示，将完整固件烧录到地址 `0x0`，然后解压并加载浏览器扩展。
+
+在仓库根目录执行以下命令，安装扩展所需的原生消息组件：
+
+```bash
+python3 -m venv .local-tools/folocard-venv
+.local-tools/folocard-venv/bin/pip install -r tools/folocard/requirements.txt
+.local-tools/folocard-venv/bin/python tools/folocard/install_native.py --extension-id <32-character-extension-id>
+```
+
+固件烧录、扩展加载、蓝牙配对和回滚方法详见 [FoloCard 部署说明](development/release/folocard-deployment.zh_CN.md)。
+
 这个仓库的组织方式是：
 
 - `main` 是最小但完整的可运行基线，也是当前硬件能力的可执行说明；

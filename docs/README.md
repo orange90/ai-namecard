@@ -4,6 +4,20 @@ English | [简体中文](README.zh_CN.md)
 
 FoloToy AI Passport is open wearable AI hardware. This repository is the development baseline for the device. It keeps the **hardware facts, stable interfaces, resource boundaries, reference implementations, and validation methods** needed to build applications in one place.
 
+## Quick start with FoloCard
+
+Download the latest `ai-namecard-full.bin` and `FoloCard-<version>-plugin.zip` from [GitHub Releases](https://github.com/orange90/ai-namecard/releases). Flash the full firmware at address `0x0` by following the safety notes in the deployment guide, then extract and load the browser extension.
+
+To install the extension's native messaging component from the repository root:
+
+```bash
+python3 -m venv .local-tools/folocard-venv
+.local-tools/folocard-venv/bin/pip install -r tools/folocard/requirements.txt
+.local-tools/folocard-venv/bin/python tools/folocard/install_native.py --extension-id <32-character-extension-id>
+```
+
+See the [FoloCard deployment guide](development/release/folocard-deployment.md) for firmware flashing, extension loading, Bluetooth pairing, and rollback instructions.
+
 The repository is organized around the following principles:
 
 - `main` is the smallest complete runnable baseline and an executable description of the current hardware capabilities.

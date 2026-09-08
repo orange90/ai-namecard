@@ -44,3 +44,10 @@ macOS `sips` 缩放并导出 BMP，随后移除 138 字节 BMP 文件头。
 `main/folocard_logos.c` 通过 `EMBED_FILES` 将其作为 LVGL ARGB8888 图像提供，
 使设备无需在运行时解码大尺寸 PNG。每个缓冲占用 6,400 字节 Flash。原始 PNG
 也会复制到 `tools/folocard/extension/assets/`，让浏览器扩展的设备屏幕预览使用同一批图标。
+
+### AI namecard 社区封面
+
+`images/ai-namecard-community-cover-v2.png` 是用于 AI Passport 社区发布页的
+1,086 × 1,448 PNG（竖版 3:4）。它仅作发布宣传封面，不会嵌入固件。图片以贡献者
+提供的 AI Passport 实拍图及其 Codex、知乎、小红书屏幕状态为素材，再通过内置图像生成
+工具合成；在本项目以外再分发前，请再次确认贡献者授权。

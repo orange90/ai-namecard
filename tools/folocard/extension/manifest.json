@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FoloCard",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Preview and sync your public profile summaries to your offline FoloCard.",
   "permissions": ["storage", "activeTab", "scripting", "nativeMessaging"],
   "host_permissions": ["https://chatgpt.com/*", "https://www.zhihu.com/*", "https://www.xiaohongshu.com/*", "https://*.zhimg.com/*", "https://*.xhscdn.com/*"],
