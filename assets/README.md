@@ -26,6 +26,21 @@ Store reusable source images and generated display assets in `images/`.
 - Preserve editable sources where licensing permits, and record the source and license.
 - Never commit device QR secrets, credentials, or personal data in images.
 
+### FoloCard brand marks
+
+`images/folocard-{codex,zhihu,xiaohongshu}-source.png` are the original brand
+marks supplied for the FoloCard pages: Codex (640 × 640), Zhihu (512 × 512),
+and Xiaohongshu (256 × 256). They were supplied by the project contributor;
+confirm redistribution rights before releasing the assets outside this project.
+
+`images/folocard-*-40.argb8888` are 40 × 40 BGRA byte buffers derived from
+those originals with macOS `sips` (resize, BMP export, then remove the
+138-byte BMP header). `main/folocard_logos.c` exposes them as LVGL
+ARGB8888 images via `EMBED_FILES`, keeping the device from decoding full-size
+PNG files at runtime. Each buffer occupies 6,400 bytes of flash. The original
+PNG files are also copied to `tools/folocard/extension/assets/` so the browser
+extension's device-screen preview uses the same marks.
+
 ## Music and sound effects
 
 Store reusable music and sound-effect sources in `music/`.

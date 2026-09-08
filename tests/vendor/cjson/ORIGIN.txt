@@ -1,0 +1,5 @@
+cJSON test dependency, MIT license (see LICENSE).
+Source: https://github.com/DaveGamble/cJSON
+Commit: c859b25da02955fef659d658b8f324b5cde87be3
+Matches the ESP-IDF 5.5.3 cJSON submodule. Used only by host parser tests;
+firmware continues to link ESP-IDF's json component.

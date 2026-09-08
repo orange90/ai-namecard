@@ -32,3 +32,15 @@
 - 与当前 BSP 音频路径匹配时优先采用 16 kHz、16 位单声道 PCM。
 - 嵌入音频前评估 Flash 与内部 RAM 成本；长录音应流式或分块。
 - 无再分发许可不提交媒体文件。
+
+### FoloCard 品牌图标
+
+`images/folocard-{codex,zhihu,xiaohongshu}-source.png` 是为 FoloCard 页面提供
+的原始品牌图标，分别为 Codex（640 × 640）、知乎（512 × 512）和小红书（256 ×
+256）。它们由项目贡献者提供；在本项目以外发布前，需确认再分发授权。
+
+`images/folocard-*-40.argb8888` 是由原图派生的 40 × 40 BGRA 字节缓冲：使用
+macOS `sips` 缩放并导出 BMP，随后移除 138 字节 BMP 文件头。
+`main/folocard_logos.c` 通过 `EMBED_FILES` 将其作为 LVGL ARGB8888 图像提供，
+使设备无需在运行时解码大尺寸 PNG。每个缓冲占用 6,400 字节 Flash。原始 PNG
+也会复制到 `tools/folocard/extension/assets/`，让浏览器扩展的设备屏幕预览使用同一批图标。

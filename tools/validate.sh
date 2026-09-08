@@ -29,6 +29,13 @@ run_static_checks() {
         -o "${test_dir}/test_ui_pixel_math"
     "${test_dir}/test_ui_pixel_math"
     python3 tests/test_verify_firmware.py
+    "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain -Itests/vendor/cjson \
+        tests/test_folocard_model.c main/folocard_model.c tests/vendor/cjson/cJSON.c \
+        -lm -o "${test_dir}/test_folocard_model"
+    "${test_dir}/test_folocard_model"
+    python3 tests/test_folocard_protocol.py
+    python3 tests/test_folocard_local.py
+    python3 tests/test_folocard_native.py
     rm -rf "${test_dir}"
     echo "Host tests: PASS"
 }

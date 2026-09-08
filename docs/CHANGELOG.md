@@ -6,6 +6,37 @@
 
 ## Unreleased
 
+- Replaced the Zhihu card's `Today interactions` metric with an instruction to
+  press OK to view the profile QR code.
+
+- Replaced the FoloCard Codex, Zhihu, and Xiaohongshu page marks with the
+  supplied official brand icons.
+
+- Corrected the Codex weekly summary to read `Weekly active: N days`, removing
+  the unsupported middle-dot glyph from the device display.
+
+- FoloCard 0.5.0 moves confirmed BLE synchronization into the installed native component, removing the extension's loopback fetch and startup-code field. The macOS installer copies its Python runtime out of privacy-protected project folders so Brave can launch it reliably. The Codex summary now shows a single-line weekly active-day count, omits the misleading `84 DAYS`, prompts for synchronization when history is absent, and logs the displayed summary over serial. Profile text is canonicalized to the firmware wire contract, and transactional card saves reclaim the inactive NVS slot before writing so a near-8 KiB update does not require space for three cards. Documents the passive NTAG213 limitation for screen-dependent NFC.
+
+- Removed the FoloCard editing section, including manual profile fields, JSON editing, and demo data. Collected cards now feed preview and confirmed device synchronization directly.
+
+- Fixed Zhihu and Xiaohongshu avatar collection by filtering lazy-load placeholders, retrying trusted CDN candidates, and checking the declared wildcard host permission. The device preview now renders the exact RGB565 avatar stored in the card.
+
+- FoloCard 0.4.0 adds a one-time native host installer and browser-triggered daily Token reading without a startup code. Fixes Codex's migrated cloud analytics URL and plain-text quota reset dates; arbitrary redirects remain blocked.
+
+- FoloCard 0.3.0 adds native Codex daily-token scanning through its own loopback bridge, without CodexBar or its CLI. Shows daily totals and a heatmap independently of browser quotas, preserves previous daily data on failure, and labels incomplete fork/interleaved history. Token-only bridge operation requires no BLE device.
+
+- FoloCard 0.2.2 declares site, avatar CDN, and local bridge access at installation and removes additional permission requests during collection and synchronization.
+
+- Added CodexBar-informed Codex usage API collection with browser-session authentication, separate primary/secondary quota and credit-balance previews, dashboard fallback, and confirmed-login/rate-limit handling. Corrected reset timestamps to the device's second-precision wire format.
+
+- Changed FoloCard collection to one-click discovery of the signed-in Codex, Zhihu, and Xiaohongshu accounts across browser tabs. Each site has separate progress and login/verification guidance; background collection persists partial successes and updates the device preview without automatically synchronizing.
+
+- Added an interactive 240 × 320 FoloToy screen preview to the FoloCard extension. It mirrors the Codex activity/usage and Zhihu/Xiaohongshu card layouts, including the device page and OK-detail interactions.
+
+- Fixed FoloCard profile extraction for Zhihu subpages and achievement labels, nested Xiaohongshu counters, and Codex remaining quotas with relative reset times. Standalone extension pages retain their source tab; extraction saves locally and avatar failures no longer discard profile updates.
+
+- Added FoloCard offline cards with branded Codex, Zhihu, and Xiaohongshu dashboards, explicit encrypted BLE synchronization, local avatar conversion, an editable browser extension, and a macOS loopback bridge.
+
 - Added the supplied 80-byte CW2017 profile for the specified 520 mAh cell, including content/update-flag checks, verified writes, the required restart sequence, and bounded SOC-readiness polling.
 
 - Reorganized the documentation by function area with a dual entry point: the root `AGENTS.md` is now a thin router (hard constraints + task routing only) and the detailed AI workflow lives in `docs/development/ai-guide.md`; `agent-guide.md` was folded in. `docs/development/` gained a second level (`engineering/`, `ci/`, `release/`), and the `plays/` application archive and `experiences/` moved into a `docs/reference/` area with a dedicated README. Removed `docs/software-design/` (empty scaffold); folded the three `assets/{fonts,images,music}/README` leaves into the `assets/` README; flattened the six `project-completion` sub-documents into a single file; and unified each directory to a single README, eliminating every `INDEX` file and a duplicated experience index. All cross-references and bibliographic links were updated; no content was dropped.

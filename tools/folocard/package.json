@@ -1,0 +1,1 @@
+{"name":"folocard-tools","private":true,"type":"module","scripts":{"test":"node --test ../../tests/test_folocard_adapters.mjs ../../tests/test_folocard_avatar.mjs ../../tests/test_folocard_collection.mjs"},"devDependencies":{"@playwright/test":"1.55.1"}}
