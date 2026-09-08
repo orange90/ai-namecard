@@ -22,7 +22,9 @@ AI Namecard 是基于 FoloToy AI Passport 改造的社区固件，把设备变�
 
 ## 安装固件
 
-完整镜像包含 bootloader、分区表和 `ai-namecard` 应用。通过 USB 连接设备，必要时让设备进入下载模式，然后使用 Espressif 的 `esptool` 将镜像写入 `0x0`：
+完整镜像包含 bootloader、分区表和 `ai-namecard` 应用。推荐优先使用 FoloToy 官方 [Web Flasher](https://ai-passport.folotoy.cn/tools/web-flasher/)，操作更简单：通过 USB 连接设备，必要时让设备进入下载模式，选择 `ai-namecard-full.bin`，再按页面提示完成烧录。
+
+也可以继续使用 Espressif 的 `esptool` 将镜像写入 `0x0`：
 
 ```bash
 python3 -m pip install --upgrade esptool
