@@ -26,3 +26,13 @@ Chromium 浏览器。
 
 不得提交或分发生成的虚拟环境、浏览器配置、原生组件注册、会话日志、配对密钥或采集到的
 名片数据。
+
+## 移除本机组件
+
+先在浏览器中移除已解压扩展并关闭浏览器。macOS 上删除
+`~/Library/Application Support/FoloCard/native`，并只删除所选浏览器在
+`~/Library/Application Support` 下 `NativeMessagingHosts` 目录中的
+`com.folotoy.folocard.json`。Linux 上删除 `~/.local/share/folocard/native`，
+并只删除所选浏览器在 `~/.config` 下 `NativeMessagingHosts` 目录中的同名配置文件。
+
+不要删除浏览器配置或 Application Support 的上级目录。

@@ -39,12 +39,13 @@ shasum -a 256 build/ai-namecard-full.bin \
 ## 发布与安装
 
 将两份生成文件及其 SHA-256 上传到 GitHub Release。标签使用
-`v<version>-folocard`，例如 `v0.5.0-folocard`。
+`v<version>-folocard`，例如 `v0.5.1-folocard`。
 
-安装固件时，在 AI Passport 浏览器烧录工具中选择
-`ai-namecard-full.bin`，偏移量为 `0x0`。不得把这个合并镜像直接写入已配置的设备：
-其资源布局跨越了受保护的身份区。已配置设备应使用 AI Passport 小程序安装流程或分段开发烧录。
-绝不能执行整片擦除。
+通过 USB 安装固件时，使用 ESP32-C3 烧录工具将 `ai-namecard-full.bin`
+写入 `0x0`。完整镜像包含 bootloader、分区表和 factory 应用；写入后会清空普通
+NVS，因此之前同步的名片数据会重置。经过校验的镜像会在 `0x356000` 的受保护
+`cardid` 分区和 `0x700000` 的永久 Recovery 之前结束；绝不能执行整片擦除，否则这些
+区域也会被删除。如需保留普通 NVS，请使用 AI Passport 小程序应用安装流程或分段开发烧录。
 
 安装插件时，解压 ZIP，以未打包扩展方式加载其中的 `extension/` 文件夹，复制扩展 ID，按包内
 README 所示运行 `install_native.py`。注册后重新加载扩展。设备上双击 OK，再单击 OK，开启三分钟

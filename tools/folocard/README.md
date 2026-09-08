@@ -30,3 +30,14 @@ supported Chromium browsers.
 
 Do not commit or distribute the generated virtual environment, browser profile,
 native-host registration, session logs, pairing keys, or collected card data.
+
+## Remove the native component
+
+Remove the unpacked extension and close the browser first. On macOS, delete
+`~/Library/Application Support/FoloCard/native` and only the
+`com.folotoy.folocard.json` file inside the selected browser's
+`NativeMessagingHosts` directory under `~/Library/Application Support`. On
+Linux, delete `~/.local/share/folocard/native` and only that same manifest file
+under the selected browser's `NativeMessagingHosts` directory in `~/.config`.
+
+Do not delete the enclosing browser profile or application-support directory.

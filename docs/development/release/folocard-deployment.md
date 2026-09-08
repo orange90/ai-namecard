@@ -44,13 +44,16 @@ all user data.
 ## Publish and install
 
 Upload both generated files and their SHA-256 values to the GitHub Release. Use
-a tag named `v<version>-folocard`, for example `v0.5.0-folocard`.
+a tag named `v<version>-folocard`, for example `v0.5.1-folocard`.
 
-To install the firmware, use the AI Passport browser flasher and select
-`ai-namecard-full.bin` at offset `0x0`. Never raw-flash this merged file
-onto a provisioned device: its resource layout spans the protected identity
-region. On a provisioned device, use the AI Passport mini-program installation
-flow or segmented development flashing. Never run an erase-flash operation.
+To install over USB, write `ai-namecard-full.bin` at offset `0x0` with an ESP32-C3
+flasher. This full image contains the bootloader, partition table, and factory
+application. Writing it clears ordinary NVS, so previously synchronized card
+data is reset. The verified image ends before the protected `cardid` partition
+at `0x356000` and permanent Recovery at `0x700000`; never run an erase-flash
+operation, which would erase those regions too. Use the AI Passport mini-program
+application flow or segmented development flashing when ordinary NVS must be
+preserved.
 
 To install the plugin, extract the ZIP, load its `extension/` folder as an
 unpacked extension, copy its extension ID, and run `install_native.py` as shown

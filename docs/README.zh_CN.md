@@ -1,142 +1,159 @@
-# FoloToy AI Passport
+<p align="right">
+  <strong>简体中文</strong> · <a href="README.md">English</a>
+</p>
 
-[English](README.md) | 简体中文
+# AI Namecard（FoloCard）
 
-FoloToy AI Passport 是一个开放式可穿戴 AI 硬件，本仓库是这款 AI 硬件的开发基线。它不只展示"板子能运行什么"，还把开发应用所需的**硬件事实、稳定接口、资源边界、参考实现和验收方法**放在同一仓库中。
+AI Namecard 是基于 FoloToy AI Passport 改造的社区固件，把设备变成一张离线的 Codex 活跃度、知乎和小红书社交名片。Chromium 浏览器插件只会在你点击“一键读取数据”后采集，先展示与设备一致的预览，再把你确认过的名片通过加密 BLE 同步到设备。
 
-## FoloCard 快速开始
+本仓库是 [FoloToy/ai-passport](https://github.com/FoloToy/ai-passport) 的独立社区 fork，不是官方固件。Release 文件统一使用 `ai-namecard` 名称，避免与上游固件混淆。
 
-从 [GitHub Releases](https://github.com/orange90/ai-namecard/releases) 下载最新的 `ai-namecard-full.bin` 和 `FoloCard-<version>-plugin.zip`。按照部署说明中的安全提示，将完整固件烧录到地址 `0x0`，然后解压并加载浏览器扩展。
+![展示 Codex、知乎和小红书名片的 AI Namecard](../assets/images/ai-namecard-community-cover-v2.png)
 
-在仓库根目录执行以下命令，安装扩展所需的原生消息组件：
+## 使用前准备
 
-```bash
-python3 -m venv .local-tools/folocard-venv
-.local-tools/folocard-venv/bin/pip install -r tools/folocard/requirements.txt
-.local-tools/folocard-venv/bin/python tools/folocard/install_native.py --extension-id <32-character-extension-id>
-```
+- 一台采用 ESP32-C3、8 MB Flash 的 FoloToy AI Passport。
+- Chromium 系浏览器：Chrome、Brave、Edge 或 Chromium。
+- macOS 或 Linux，以及 Python 3.10 及以上版本，用于安装 Native Messaging 与 BLE 组件。目前没有提供 Windows 安装器。
+- 从[最新 GitHub Release](https://github.com/orange90/ai-namecard/releases/latest)下载两个文件：
+  - `ai-namecard-full.bin`
+  - `FoloCard-<version>-plugin.zip`
+- 如需校验下载文件，同时获取同一 Release 中的 `SHA256SUMS.txt`。
 
-固件烧录、扩展加载、蓝牙配对和回滚方法详见 [FoloCard 部署说明](development/release/folocard-deployment.zh_CN.md)。
+## 安装固件
 
-这个仓库的组织方式是：
-
-- `main` 是最小但完整的可运行基线，也是当前硬件能力的可执行说明；
-- `components/bsp` 隔离板级差异，为应用提供稳定 API；
-- `demo/*` 分支展示从需求到成品的不同实现路径；
-- AI 开发约定见 [`AGENTS.zh_CN.md`](../AGENTS.zh_CN.md) 与 [`docs/development/ai-guide.zh_CN.md`](development/ai-guide.zh_CN.md)；完整硬件上下文和故障知识见 [`docs/hardware-design/AI_HARDWARE_DEVELOPMENT_GUIDE.zh_CN.md`](hardware-design/AI_HARDWARE_DEVELOPMENT_GUIDE.zh_CN.md)；
-- 构建结果与真机结果分开记录，禁止把"编译通过"描述成"硬件验证通过"。
-
-## 硬件能力契约
-
-下表描述的是当前 `main` 已提供的应用能力，而不是芯片数据手册中所有可能的能力。
-
-| 能力 | 已确认实现 | 应用接口 | 必须遵守的边界 |
-| --- | --- | --- | --- |
-| 显示 | ST7789P3，240 × 320，竖屏 RGB565，SPI2 40 MHz；LEDC 背光 | `bsp_display_*`、`bsp_lvgl_*` | ESP32-C3 无 PSRAM；当前为小型单 DMA 缓冲；BSP 未暴露 LCD MISO、触摸或 TE 接口 |
-| 输入 | `UP` / `DOWN` / `OK` 三键，共用 GPIO0 的 ADC 电阻分压 | `bsp_button_init()`、`bsp_button_read_mv()` | 回调运行在 button 组件任务中，不能阻塞；不能再创建第二个 ADC1 unit |
-| 音频 | ES8311，I2S0 全双工 PCM，可播放和麦克风录音 | `bsp_audio_*` | PCM 读写为阻塞调用，应放工作任务；格式切换必须保留 BSP 内的 close/open 流程 |
-| 电池 | CW2017 的 SOC 与电压读取 | `bsp_battery_*` | 是可缺省能力；读数精度取决于电芯与 profile，不能等同于已标定结果 |
-| Wi-Fi | 按需 2.4 GHz STA 扫描 demo | `main/demo_wifi.c` | 仅扫描；不连接、不存凭证、不验证天线/射频表现 |
-| Bluetooth LE | 按需以 `FoloPassport` 名义做不可连接的 NimBLE 广播 | `main/demo_ble.c` | ESP32-C3 不支持蓝牙经典；射频范围、共存与功耗需实测 |
-| 低功耗 | 两秒浅睡眠与五秒深睡眠，均以 RTC 定时器唤醒 | `main/demo_low_power.c` | 深睡眠会重启应用；当前 demo 只提供 RTC 定时器唤醒 |
-| 共享总线 | ES8311 与 CW2017 共用 I2C0 | `bsp_i2c_*` | 所有设备复用 BSP 持有的总线；不能为扫描或新设备再创建同端口总线 |
-| 日志与烧录 | ESP32-C3 原生 USB Serial/JTAG | ESP-IDF console | GPIO18/19 保留给 USB；UART0 默认 TX GPIO21 与背光冲突 |
-
-所有引脚、地址、面板参数和按键电压窗口只在 [`components/bsp/include/bsp_pins.h`](../components/bsp/include/bsp_pins.h) 定义。应用代码不得复制这些常量。完整引脚表、面板初始化、ADC 阈值、I2C 地址规则、音频时钟和内存说明见 [AI 硬件开发指南](hardware-design/AI_HARDWARE_DEVELOPMENT_GUIDE.zh_CN.md)。
-
-应用也可以使用 ESP-IDF 提供的定时器、FreeRTOS 任务和内部 Flash/NVS；番茄钟分支提供了 NVS 示例。Wi-Fi 和 Bluetooth LE 仍是 ESP-IDF 应用服务而非 BSP API：其菜单页面仅在打开时初始化对应协议栈、退出时释放。`demo/claude-buddy-port` 仍是更完整的 BLE 应用架构参考，不能替代对当前板卡天线、射频表现、功耗和共存行为的实测。当前产品与固件基线使用 8 MB Flash，包含 3 MB factory-app 分区，并固定保留设备身份与永久 Recovery 区域，使二创固件仍可通过小程序安装。
-
-### 不属于当前能力契约的事项
-
-公开固件能力以表中接口为限，不能仅凭 ESP32-C3 芯片能力推断其他板级接口。新增硬件接口必须提供明确的 BSP 定义和实机验收标准。
-
-## 用一句需求开始开发
-
-简单需求可以直接交给 AI 助手：
-
-```text
-请为 FoloToy AI Passport 开发一个离线习惯打卡应用。
-使用三个实体按键和 240×320 屏幕，记录保存在掉电不丢失的存储中。
-从 `main` 开始，创建 `feature/*` 分支并在该分支上开发。
-遵守 AGENTS.md 和 docs/hardware-design/AI_HARDWARE_DEVELOPMENT_GUIDE.md；先查找相关 demo 分支与 plays/ 应用，
-保持硬件逻辑在 components/bsp、应用逻辑在 main，完成可运行实现与测试，
-最后分别报告构建结果、未执行的真机项目和逐项验收方法。
-```
-
-开始前先看 [`reference/`](reference/README.zh_CN.md) 有没有已存在或可参考的应用、以及已沉淀、可复用的经验，再配合相关 demo 分支。
-这些列出了已经构建好、可复用的东西。
-
-需求越具体，AI 助手越容易一次实现正确。建议说明：
-
-- 用户流程：每个页面显示什么，三个按键的短按、双击、长按分别做什么；
-- 状态与数据：是否计时、断电保存、联网、录音或与电脑通信；
-- 体验目标：字体、颜色、动画、声音、响应时间和异常状态；
-- 限制条件：是否允许替换主菜单、增加依赖、使用 Flash 或改变默认交互；
-- 验收标准：哪些行为必须自动测试，哪些必须在真实硬件观察。
-
-若需求没有给出所有细节，AI 助手可以在不改变产品方向的范围内采用保守默认值，但应在交付中列出这些假设。涉及新接线、电源安全、硬件版本或不可恢复数据格式的决定必须先确认。
-
-## 示例分支是设计案例，不是功能堆叠
-
-每个 `demo/*` 分支都从基线演化出一个独立应用。它们的价值是展示具体问题的实现方式；新应用通常应从 `main` 建分支，按需参考，而不是把多个 demo 整体合并。
-
-| 分支 | 展示的应用 | 值得复用的模式 |
-| --- | --- | --- |
-| `demo/stopwatch` | 秒表 | 最小计时应用、纯逻辑与 LVGL 分离、主机逻辑测试 |
-| `demo/cat-themed-pomodoro-timer` | 猫咪养成番茄钟 | 单调时钟、暂停/恢复、NVS 持久化、较完整的 PRD 与状态模型 |
-| `demo/rock-paper-scissors` | 石头剪刀布 | RGB565 图片资产、素材生成脚本、Flash 资源权衡 |
-| `demo/tetris-game` | 三键俄罗斯方块 | 实时游戏循环、低延迟 `PRESS` 输入、局部刷新、纯游戏模型、音效与麦克风交互 |
-| `demo/claude-buddy-port` | 桌面 AI 硬件伴侣 | 用完整应用替换 demo 菜单、加密 BLE、协议解析、状态归约、任务通信和较完整的主机测试 |
-
-查看示例而不切换当前工作区：
+完整镜像包含 bootloader、分区表和 `ai-namecard` 应用。通过 USB 连接设备，必要时让设备进入下载模式，然后使用 Espressif 的 `esptool` 将镜像写入 `0x0`：
 
 ```bash
-git branch -r --list 'origin/demo/*'
-git diff main...origin/demo/tetris-game -- main components tests
-git show origin/demo/tetris-game:main/demo_tetris.c
+python3 -m pip install --upgrade esptool
+python3 -m esptool --chip esp32c3 --port PORT write_flash 0x0 ai-namecard-full.bin
 ```
 
-开始新应用。本仓库在同一个基线上承载多个独立项目：从 `main` 开始后，应创建 `feature/*` 分支并在该分支上开发，**不要**直接在 `main` 上开发。每个项目的最终分支都是 `feature/*`（如 `feature/my-passport-app`），让 `main` 保持干净的上游基线，各项目互不纠缠。
+将 `PORT` 替换成设备端口，例如 macOS 上的 `/dev/cu.usbmodem*` 或 Linux 上的 `/dev/ttyACM*`。
+
+> 不要执行 `erase_flash`。从 `0x0` 写入完整镜像会清空普通 NVS，因此之前同步的名片数据会重置，这是正常现象。经过校验的 Release 镜像会在 `0x356000` 的受保护 `cardid` 分区和 `0x700000` 的永久 Recovery 之前结束。
+
+设备重启后应进入 FoloCard 页面。实体按键操作如下：
+
+| 操作 | 功能 |
+| --- | --- |
+| UP / DOWN | 在 Codex、知乎和小红书名片之间切换 |
+| OK | 打开或关闭当前名片详情 |
+| 双击 OK | 打开同步设置 |
+| 在同步设置中按 OK | 开启三分钟 BLE 同步窗口 |
+| 长按 OK | 返回主名片并取消同步 |
+
+分区细节、开发时的其他烧录方式和回滚方法见 [部署说明](development/release/folocard-deployment.zh_CN.md)。
+
+## 安装浏览器插件
+
+FoloCard 目前不是 Chrome 应用商店插件，需要以“已解压扩展程序”方式安装。
+
+1. 解压 `FoloCard-<version>-plugin.zip`。
+2. 在 Chrome 或 Brave 打开 `chrome://extensions`；Edge 或 Chromium 使用对应的扩展管理页。
+3. 开启“开发者模式”，点击“加载已解压的扩展程序”。
+4. 选择解压后的 `FoloCard-<version>-plugin/extension` 目录。
+5. 复制浏览器显示的 32 位扩展 ID。
+6. 在终端进入解压后的插件目录，安装本机组件：
 
 ```bash
-git switch main
-git switch -c feature/my-passport-app
+python3 -m venv .folocard-venv
+.folocard-venv/bin/pip install -r requirements.txt
+.folocard-venv/bin/python install_native.py --extension-id CHROME_EXTENSION_ID
 ```
 
-示例分支之间可能改变了同一菜单、配置或驱动。应先理解差异，再提取状态模型、资源流水线或并发模式；不能因为代码曾出现在示例分支，就把它当成当前 `main` 的 BSP 保证。
+把 `CHROME_EXTENSION_ID` 替换成刚复制的 ID，然后重新加载扩展。默认会为 Chrome 和 Brave 注册；其他浏览器可再次执行最后一条命令，并增加 `--browser edge` 或 `--browser chromium`。
 
-## 项目结构
+本机组件是必需的，因为浏览器扩展不能直接读取本地 Codex 会话文件，也不能直接通过 Python 连接 BLE。它只在已安装扩展发起读取或同步时运行，不是后台常驻服务，也不需要启动码。
 
-```text
-components/bsp/include/  BSP 公开 API 与 bsp_pins.h 硬件事实
-components/bsp/src/      显示、按键、音频、电池、共享 I2C 实现
-main/                    最小菜单、LVGL UI 与独立硬件演示页
-tests/                   可脱离硬件运行的轻量逻辑测试源
-tools/                   本地与 CI 共用的验证及固件校验脚本
-docs/                    项目说明、变更记录、工程/协作规范与设计参考
-.github/                 GitHub 社区文档、PR 模板、Issue Form 与 CI 工作流
-sdkconfig.defaults       ESP32-C3、USB console、Flash、LVGL 默认配置
-partitions.csv           应用与设备身份/Recovery 保护分区布局
-dependencies.lock        可复现的 ESP-IDF Managed Component 解析结果
-AGENTS.md                AI agent 必读入口（与 AGENTS.zh_CN.md 配对）
-CLAUDE.md                Claude Code 指向 AGENTS.md 的入口（含中文配对）
-LICENSE                  仓库许可证
+## 读取、预览与同步
+
+1. 在同一浏览器配置中登录 Codex/ChatGPT、知乎和小红书；不需要的站点可以跳过。
+2. 打开 FoloCard，点击“一键读取数据”。扩展会查找已登录账号页面，并通过本机组件读取本地 Codex 每日 Token 计数。
+3. 检查设备效果预览。各站点独立更新，某一站点失败时会保留它原来的名片。
+4. 在设备上双击 OK，再按一次 OK，开启三分钟同步窗口。
+5. 在扩展中勾选确认框，点击“确认并同步到 FoloCard”。
+6. 首次连接时，把设备显示的六位 PIN 填入操作系统的蓝牙配对弹窗。扩展本身不会索要 PIN。
+
+如果扩展提示 BLE 连接失败，请先在系统蓝牙设置中忽略已有的 **FoloCard**，然后重新配对。
+
+## 技术原理
+
+```mermaid
+flowchart LR
+    A[已登录的网站页面] --> B[Manifest V3 浏览器扩展]
+    C[本地 Codex 会话文件] --> D[限定扩展来源的本机组件]
+    B --> D
+    D --> E[加密并绑定的 BLE]
+    E --> F[ESP32-C3 固件]
+    F --> G[事务式 NVS 名片存储]
+    G --> H[LVGL 设备界面]
 ```
 
-## 文档索引
+- **浏览器采集：** 无构建依赖的 Manifest V3 JavaScript 只在明确点击后读取当前浏览器配置。网站 Cookie 和原始响应保留在浏览器上下文中。
+- **本地 Codex 汇总：** Python 本机组件扫描指定 Codex 目录下的 `sessions/**/*.jsonl` 和 `archived_sessions/**/*.jsonl`，只返回每日数值合计和统计完整性状态，不返回认证文件或会话正文。
+- **Native Messaging：** 浏览器通过与扩展 ID 绑定的来源白名单启动 `com.folotoy.folocard`。扩展的正常工作流使用标准输入输出的 Native Messaging，不依赖本地 HTTP 服务。
+- **BLE 安全：** ESP32-C3 只在同步窗口开启时以 `FoloCard` 广播；特征要求加密、认证和绑定连接。传输包含声明长度、CRC32、有序分片和提交回执。
+- **安全持久化：** 新数据先在 RAM 中校验，再写入非活动 NVS 槽，提交成功后才切换为当前数据。非法或中断的传输不会破坏上一份名片。
+- **设备渲染：** 固件基于 ESP-IDF 5.5.3 和 LVGL，适配 240 × 320 屏幕。允许来源的头像在本机完成裁剪，并转换成 24 × 24 RGB565 图像后再同步。
 
-本仓库文档按功能域组织。`authoritative` 指对开发与协作有约束力的文档；`参考` 指提供背景或索引的文档。
+完整 JSON、BLE UUID、回执、校验和存储契约见 [FoloCard 技术设计](assets/folocard.zh_CN.md)。
 
-- [`docs/development/`](development/README.zh_CN.md) — 工程规则与可复用工作流：`ai-guide.md`、`engineering/`、`ci/`、`release/` 区。其 README 列明它们。
-- [`docs/contribution/`](contribution/README.zh_CN.md) — 协作、文档与提交/PR 约定。
-- [`docs/hardware-design/`](hardware-design/README.zh_CN.md) — 板卡事实、约束、验收矩阵与排障。
-- [`docs/reference/`](reference/README.zh_CN.md) — 参考资料：按贡献者（`reference/<username>/`）组织可复用开发经验与已归档应用于册。
-- [`docs/brand/`](brand/README.zh_CN.md) — 公开品牌与产品语言（`brand-and-product.zh_CN.md`）与官方产品视觉参考。
-- [`docs/`](README.zh_CN.md) 顶层 — [`CHANGELOG.zh_CN.md`](CHANGELOG.zh_CN.md)、[`brand-and-product.zh_CN.md`](brand/brand-and-product.zh_CN.md)、[`fork-guide.zh_CN.md`](fork-guide.zh_CN.md)。
+## 数据与隐私边界
 
-GitHub 社区治理文档：[CONTRIBUTING.zh_CN.md](../.github/CONTRIBUTING.zh_CN.md)、[CODE_OF_CONDUCT.zh_CN.md](../.github/CODE_OF_CONDUCT.zh_CN.md)、[SECURITY.zh_CN.md](../.github/SECURITY.zh_CN.md)、[SUPPORT.zh_CN.md](../.github/SUPPORT.zh_CN.md)。
+FoloCard 没有项目自建的云端后端，也不需要 API Key；但它仍会访问你已登录的网站，因此这些服务自身的网络请求和账号规则依然适用。
 
-> 注：本 README 只描述产品与仓库，不含给 AI 的执行说明；AI 开始开发前请先读根目录 `AGENTS.zh_CN.md`，再按任务路由读取相关文档。
+| 数据 | 处理方式 |
+| --- | --- |
+| 浏览器 Cookie 与账号令牌 | 留在网站和浏览器上下文，不发送给本机组件或设备 |
+| 公开资料字段与选定用量数值 | 明确点击读取后保存在扩展本地存储，确认同步后才发送到设备 |
+| 本地 Codex 会话文件 | 只在本机读取计数；原始行、Prompt 和认证文件不会返回扩展 |
+| 头像来源 | 从清单声明的图片站点获取，在本机转换并以 RGB565 像素写入名片；设备不保存原始 URL |
+| BLE 配对密钥 | 由操作系统和 ESP32 协议栈管理，扩展与本机组件不会读取 |
 
-- [FoloCard MVP 与桌面工具](assets/folocard.zh_CN.md)：离线名片、本机同步与验收步骤。
-- [FoloCard 部署与发布](development/release/folocard-deployment.zh_CN.md)：经过验证的固件与插件打包。
+不要公开浏览器配置、本机组件注册文件、本地虚拟环境、配对材料、已采集名片、设备二维码秘密参数或未脱敏日志。
+
+## 常见问题
+
+| 问题 | 处理方法 |
+| --- | --- |
+| 提示 `Native host not found` | 核对扩展 ID，重新运行 `install_native.py`，然后重新加载扩展 |
+| 扫描不到 FoloCard | 确认系统蓝牙已开启，并确认设备仍显示同步窗口 |
+| BLE 连接或 PIN 配对失败 | 在系统蓝牙设置中忽略已有的 FoloCard 后重新配对；PIN 只填入系统弹窗 |
+| 某个网站读取失败 | 完成登录、允许扩展访问站点，点击“打开检查”，然后重新读取 |
+| 烧录后名片为空 | 完整镜像会清空普通 NVS，请重新读取并同步名片 |
+| 数据看起来不完整 | 确认每个站点状态并核对预览；网站页面结构以及私密或隐藏字段可能变化 |
+
+网站适配器最后核对日期为 2026-09-08。它们依赖当前登录页面和部分网站内部接口，而不是稳定的公开 API；网站后续改版可能需要更新扩展。
+
+## 更新或移除
+
+更新时，把新插件包解压到固定目录，重新加载已解压扩展；如果扩展 ID 或本机文件发生变化，再次运行 `install_native.py`。重新烧录完整固件会清空已同步名片，之后需要再次同步。
+
+移除时，先在浏览器中删除已解压扩展。本机组件与浏览器注册属于用户级文件，其 macOS 和 Linux 具体位置见 [桌面工具说明](../tools/folocard/README.zh_CN.md)；关闭浏览器后再手动删除。
+
+## 从源码构建
+
+固件构建需要 ESP-IDF 5.5.3 和 ESP32-C3 目标：
+
+```bash
+source /path/to/esp-idf-v5.5.3/export.sh
+./tools/validate.sh --static
+./tools/validate.sh --firmware
+./tools/folocard/package-release.sh build/release
+```
+
+发布门禁会保留 3 MB factory 应用限制、`0x356000` 的 `cardid`、`0x700000` 的永久 Recovery，以及开机长按 UP 五秒进入 Recovery 的入口。构建成功不能代替真机验证；每个 Release 都会分别报告构建、主机测试和真机测试结果。
+
+## 项目状态与链接
+
+- [Release 与下载](https://github.com/orange90/ai-namecard/releases)
+- [变更记录](CHANGELOG.zh_CN.md)
+- [部署说明](development/release/folocard-deployment.zh_CN.md)
+- [技术设计](assets/folocard.zh_CN.md)
+- [问题与反馈](https://github.com/orange90/ai-namecard/issues)
+- [参与贡献](../.github/CONTRIBUTING.zh_CN.md)与[安全政策](../.github/SECURITY.zh_CN.md)
+
+这个 fork 仍在持续开发，只面向上述 AI Passport 硬件，并不是通用 ESP32-C3 固件。板载 NTAG213 是静态被动 NFC 标签，不能根据屏幕当前显示的名片动态切换跳转目标。
+
+本项目采用 [Apache License 2.0](../LICENSE)。
