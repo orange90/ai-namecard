@@ -50,6 +50,9 @@ photos of the physical AI Passport and its Codex, Zhihu, and Xiaohongshu screen
 states, composited with the built-in image-generation tool. Reconfirm the
 contributor's permission before redistributing it outside this project.
 
+`images/ai-namecard-community-cover-landscape-v1.png` is the matching 1,448 ×
+1,086 PNG (4:3 landscape) cover. It has the same source and upload-only use.
+
 ## Music and sound effects
 
 Store reusable music and sound-effect sources in `music/`.

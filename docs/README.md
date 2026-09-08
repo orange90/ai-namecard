@@ -8,13 +8,13 @@ AI Namecard is a FoloToy AI Passport firmware fork that turns the device into an
 
 This repository is an independent community fork of [FoloToy/ai-passport](https://github.com/FoloToy/ai-passport). It is not the official firmware, and its release files use the `ai-namecard` name to avoid being mistaken for upstream builds.
 
-![AI Namecard showing Codex, Zhihu, and Xiaohongshu cards](../assets/images/ai-namecard-community-cover-v2.png)
+![AI Namecard showing Codex, Zhihu, and Xiaohongshu cards](../assets/images/ai-namecard-community-cover-landscape-v1.png)
 
 ## What you need
 
 - A FoloToy AI Passport with an ESP32-C3 and 8 MB Flash.
 - A Chromium browser: Chrome, Brave, Edge, or Chromium.
-- macOS or Linux and Python 3.10 or newer for the native messaging and BLE component. A Windows installer is not currently included.
+- A Unix-like desktop environment and Python 3.10 or newer for the native messaging and BLE component. The bundled installer is intended for POSIX desktop systems.
 - The two files from the [latest GitHub Release](https://github.com/orange90/ai-namecard/releases/latest):
   - `ai-namecard-full.bin`
   - `FoloCard-<version>-plugin.zip`
@@ -29,7 +29,7 @@ python3 -m pip install --upgrade esptool
 python3 -m esptool --chip esp32c3 --port PORT write_flash 0x0 ai-namecard-full.bin
 ```
 
-Replace `PORT` with the device port, such as `/dev/cu.usbmodem*` on macOS or `/dev/ttyACM*` on Linux.
+Replace `PORT` with the device port, usually `/dev/cu.usbmodem*` or `/dev/ttyACM*`.
 
 > Do not run `erase_flash`. Writing the full image at `0x0` clears ordinary NVS, so previously synchronized card data is reset; this is expected. The verified Release image ends before the protected `cardid` partition at `0x356000` and permanent Recovery at `0x700000`.
 
@@ -130,7 +130,7 @@ The website adapters were last reviewed on 2026-09-08. They use current signed-i
 
 To update, extract the new plugin bundle over a stable directory, reload the unpacked extension, and rerun `install_native.py` whenever the extension ID or native files change. Flashing a new full firmware image resets synchronized cards, so synchronize again afterward.
 
-To remove FoloCard, remove the unpacked extension in the browser. The installed native files and browser registration are user-level files; their exact macOS and Linux locations are listed in the [desktop tools guide](../tools/folocard/README.md). Remove them manually only after closing the browser.
+To remove FoloCard, remove the unpacked extension in the browser. The installed native files and browser registration are user-level files; their platform-specific locations are listed in the [desktop tools guide](../tools/folocard/README.md). Remove them manually only after closing the browser.
 
 ## Build from source
 

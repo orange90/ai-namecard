@@ -51,3 +51,6 @@ macOS `sips` 缩放并导出 BMP，随后移除 138 字节 BMP 文件头。
 1,086 × 1,448 PNG（竖版 3:4）。它仅作发布宣传封面，不会嵌入固件。图片以贡献者
 提供的 AI Passport 实拍图及其 Codex、知乎、小红书屏幕状态为素材，再通过内置图像生成
 工具合成；在本项目以外再分发前，请再次确认贡献者授权。
+
+`images/ai-namecard-community-cover-landscape-v1.png` 是配套的 1,448 ×
+1,086 PNG（横版 4:3），素材来源和用途相同。

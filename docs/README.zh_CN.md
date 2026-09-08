@@ -8,13 +8,13 @@ AI Namecard 是基于 FoloToy AI Passport 改造的社区固件，把设备变�
 
 本仓库是 [FoloToy/ai-passport](https://github.com/FoloToy/ai-passport) 的独立社区 fork，不是官方固件。Release 文件统一使用 `ai-namecard` 名称，避免与上游固件混淆。
 
-![展示 Codex、知乎和小红书名片的 AI Namecard](../assets/images/ai-namecard-community-cover-v2.png)
+![展示 Codex、知乎和小红书名片的 AI Namecard](../assets/images/ai-namecard-community-cover-landscape-v1.png)
 
 ## 使用前准备
 
 - 一台采用 ESP32-C3、8 MB Flash 的 FoloToy AI Passport。
 - Chromium 系浏览器：Chrome、Brave、Edge 或 Chromium。
-- macOS 或 Linux，以及 Python 3.10 及以上版本，用于安装 Native Messaging 与 BLE 组件。目前没有提供 Windows 安装器。
+- 类 Unix 桌面环境与 Python 3.10 及以上版本，用于安装 Native Messaging 与 BLE 组件。包内安装器面向 POSIX 桌面系统。
 - 从[最新 GitHub Release](https://github.com/orange90/ai-namecard/releases/latest)下载两个文件：
   - `ai-namecard-full.bin`
   - `FoloCard-<version>-plugin.zip`
@@ -29,7 +29,7 @@ python3 -m pip install --upgrade esptool
 python3 -m esptool --chip esp32c3 --port PORT write_flash 0x0 ai-namecard-full.bin
 ```
 
-将 `PORT` 替换成设备端口，例如 macOS 上的 `/dev/cu.usbmodem*` 或 Linux 上的 `/dev/ttyACM*`。
+将 `PORT` 替换成设备端口，通常是 `/dev/cu.usbmodem*` 或 `/dev/ttyACM*`。
 
 > 不要执行 `erase_flash`。从 `0x0` 写入完整镜像会清空普通 NVS，因此之前同步的名片数据会重置，这是正常现象。经过校验的 Release 镜像会在 `0x356000` 的受保护 `cardid` 分区和 `0x700000` 的永久 Recovery 之前结束。
 
@@ -130,7 +130,7 @@ FoloCard 没有项目自建的云端后端，也不需要 API Key；但它仍会
 
 更新时，把新插件包解压到固定目录，重新加载已解压扩展；如果扩展 ID 或本机文件发生变化，再次运行 `install_native.py`。重新烧录完整固件会清空已同步名片，之后需要再次同步。
 
-移除时，先在浏览器中删除已解压扩展。本机组件与浏览器注册属于用户级文件，其 macOS 和 Linux 具体位置见 [桌面工具说明](../tools/folocard/README.zh_CN.md)；关闭浏览器后再手动删除。
+移除时，先在浏览器中删除已解压扩展。本机组件与浏览器注册属于用户级文件，各平台具体位置见 [桌面工具说明](../tools/folocard/README.zh_CN.md)；关闭浏览器后再手动删除。
 
 ## 从源码构建
 
