@@ -22,7 +22,9 @@ This repository is an independent community fork of [FoloToy/ai-passport](https:
 
 ## Install the firmware
 
-The full image contains the bootloader, partition table, and `ai-namecard` application. Connect the device over USB, put it into download mode if necessary, and flash the image at `0x0` with Espressif's `esptool`:
+The full image contains the bootloader, partition table, and `ai-namecard` application. For the simplest installation, use FoloToy's official [Web Flasher](https://ai-passport.folotoy.cn/tools/web-flasher/): connect the device over USB, put it into download mode if necessary, choose `ai-namecard-full.bin`, and follow the page's flashing steps.
+
+You can also flash the image at `0x0` with Espressif's `esptool`:
 
 ```bash
 python3 -m pip install --upgrade esptool
